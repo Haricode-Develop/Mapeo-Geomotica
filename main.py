@@ -1,16 +1,20 @@
+import sys
 import folium
 import pandas as pd
 from sqlalchemy import create_engine
 from folium.plugins import MiniMap
 
 # Conectarse a la base de datos usando SQLAlchemy
-engine = create_engine("mysql+mysqlconnector://root:@localhost/geomotica")
+engine = create_engine("mysql+mysqlconnector://root:wtRykrEX9As8wN@localhost/geomotica")
+id_analisis = sys.argv[1]
+tabla = sys.argv[2]
 
 # Consulta SQL para obtener datos
-query = """SELECT LONGITUD, LATITUD, CULTIVO, NOMBRE_FINCA, ACTIVIDAD, 
-           FECHA_INICIO, HORA_INICIO, HORA_FINAL 
-           FROM aps WHERE ID_ANALISIS = 24;"""
-df = pd.read_sql(query, engine)
+query = f"""SELECT LONGITUD, LATITUD, CULTIVO, NOMBRE_FINCA, ACTIVIDAD, 
+            FECHA_INICIO, HORA_INICIO, HORA_FINAL 
+            FROM {tabla} WHERE ID_ANALISIS = {id_analisis};"""
+
+df = pd.read_sql(query, engine, params={"id_analisis": id_analisis})
 
 # Crear mapa centrado en la primera coordenada con opción de satélite
 tiles_option = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
